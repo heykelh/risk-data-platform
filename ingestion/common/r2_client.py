@@ -1,6 +1,6 @@
 """
-Client Cloudflare R2 partagé entre tous les scripts d'ingestion.
-Compatible avec l'API S3 via boto3.
+Client MinIO/S3 partagé entre tous les scripts d'ingestion.
+Compatible MinIO local et Cloudflare R2.
 """
 import os
 import boto3
@@ -11,15 +11,15 @@ load_dotenv()
 
 
 def get_r2_client():
-    """Retourne un client boto3 configuré pour Cloudflare R2."""
-    account_id = os.environ["R2_ACCOUNT_ID"]
+    """Retourne un client boto3 configuré pour MinIO ou Cloudflare R2."""
+    endpoint = os.environ["R2_ENDPOINT_URL"]  # http://localhost:9000 en local
     return boto3.client(
         "s3",
-        endpoint_url=f"https://{account_id}.r2.cloudflarestorage.com",
+        endpoint_url=endpoint,
         aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
         aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
         config=Config(signature_version="s3v4"),
-        region_name="auto",
+        region_name="us-east-1",
     )
 
 
